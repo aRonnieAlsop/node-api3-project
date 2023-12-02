@@ -21,7 +21,7 @@ async function validateUserId(req, res, next) {
     next()
   }
  } catch (err) {
-
+    next(err)
  }
 }
 
@@ -29,7 +29,7 @@ function validateUser(req, res, next) {
   // DO YOUR MAGIC
   const { name } = req.body
   if (!name || !name.trim()) {
-    req.status(400).json({
+    res.status(400).json({
       message: `missing required name field`,
     })
   } else {
@@ -43,7 +43,7 @@ function validatePost(req, res, next) {
   // DO YOUR MAGIC
   const { text } = req.body
   if (!text || !text.trim()) {
-    req.status(400).json({
+    res.status(400).json({
       message: `missing required text field`,
     })
   } else {
