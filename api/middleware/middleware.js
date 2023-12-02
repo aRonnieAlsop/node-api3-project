@@ -12,7 +12,17 @@ function logger(req, res, next) {
 }
 
 async function validateUserId(req, res, next) {
- 
+ try {
+  const user = await User.getById(req.params.id)
+  if (!user) {
+    next({ status: 404, message: `user not found`})
+  } else {
+    req.user = user
+    next()
+  }
+ } catch (err) {
+
+ }
 }
 
 function validateUser(req, res, next) {
