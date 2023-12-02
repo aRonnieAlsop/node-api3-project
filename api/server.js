@@ -1,11 +1,12 @@
 const express = require('express')
-const helmet = require('helmet')
-const logger = require('morgan')
+const { logger } = require('./middleware/middleware')
+const usersRouter = require('./users/users-router')
 
 const server = express()
-server.use(helmet())
-server.use(logger(`dev`))
 
+server.use(logger)
+
+server.use('/api/users', usersRouter)
 
 // remember express by default cannot parse JSON in request bodies
 server.use(express.json())
