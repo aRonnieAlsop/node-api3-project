@@ -6,12 +6,11 @@ const {
 } = require('../middleware/middleware')
 // You will need `users-model.js` and `posts-model.js` both
 // The middleware functions also need to be required
+const router = express.Router()
 const User = require('./users-model')
 const Post = require('../posts/posts-model')
 
-const router = express.Router();
-
-router.get('/', (req, res) => {
+router.get('/', (req, res, next) => {
   // RETURN AN ARRAY WITH ALL THE USERS
   User.get()
     .then(users => {
@@ -24,7 +23,8 @@ router.get('/:id', validateUserId, (req, res) => {
   // RETURN THE USER OBJECT
   // this needs a middleware to verify user id
   res.json(req.user)
-});
+
+})
 
 router.post('/', validateUser, (req, res, next) => {
   // RETURN THE NEWLY CREATED USER OBJECT
@@ -34,9 +34,9 @@ router.post('/', validateUser, (req, res, next) => {
       res.status(201).json(newUser)
     })
     .catch(next)
-});
+})
 
-router.put('/:id', validateUserId, validateUser, (req, res) => {
+router.put('/:id', validateUserId, validateUser, (req, res, next) => {
   // RETURN THE FRESHLY UPDATED USER OBJECT
   // this needs a middleware to verify user id
   // and another middleware to check that the request body is valid
@@ -48,7 +48,7 @@ router.put('/:id', validateUserId, validateUser, (req, res) => {
       res.json(updatedUser)
     })
     .catch(next)
-});
+})
 
 router.delete('/:id', validateUserId, async (req, res, next) => {
   // RETURN THE FRESHLY DELETED USER OBJECT
@@ -59,18 +59,18 @@ router.delete('/:id', validateUserId, async (req, res, next) => {
 } catch (err) {
   next(err)
 }
-});
+})
 
-router.get('/:id/posts', validateUserId, async (req, res) => {
-  // RETURN THE ARRAY OF USER POSTS
-  // this needs a middleware to verify user id
+router.get('/:id/posts', validateUserId, async (req, res, next) => {
   try {
-    const result = await User.getUserPosts(req.params.id)
+    const userId = req.params.id
+    const posts = await Users.getUserPosts(userId)
+    res.json(posts)
   } catch (err) {
     next(err)
   }
+})
 
-});
 
 router.post(
   '/:id/posts', 
@@ -89,7 +89,7 @@ router.post(
   } catch (err) {
     next(err)
   }
-});
+})
 
 
 router.use((err, req, res, next) => {
